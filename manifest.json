@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "ForgeLock",
+  "version": "0.0.1",
+  "description": "Secure password generator",
+  "icons": {
+    "128": "icons/128.png",
+    "512": "icons/512.png",
+    "16": "icons/favicon.png"
+  },
+  "permissions": ["clipboardWrite"],
+  "host_permissions": ["https://forgelock.danials.space/"],
+  "action": {
+    "default_icon": {
+      "16": "icons/favicon.png",
+      "128": "icons/128.png"
+    },
+    "default_popup": "popup.html"
+  }
+}

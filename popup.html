@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 300px;
+      min-height: 600px;
+      padding: 20px;
+      background-color: #1a1a1a;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .settings-icon {
+      color: #5d7599;
+      cursor: pointer;
+    }
+
+    .title {
+      font-size: 24px;
+      color: white;
+      margin: 0;
+    }
+
+    .reset-btn {
+      color: #5d7599;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .option-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #2f3640;
+      border-radius: 24px;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      border-radius: 50%;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #5d7599;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .length-slider {
+      width: 100%;
+      margin: 10px 0;
+      -webkit-appearance: none;
+      height: 4px;
+      background: #5d7599;
+      border-radius: 2px;
+      outline: none;
+    }
+
+    .length-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .text-field {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      background-color: #1e2530;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      box-sizing: border-box;
+    }
+
+    .text-field::placeholder {
+      color: #5d7599;
+    }
+
+    .section-title {
+      margin: 15px 0 10px 0;
+      color: white;
+      font-size: 14px;
+    }
+
+    .add-button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: transparent;
+      border: 2px solid #5d7599;
+      color: #5d7599;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #5d7599;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    html {
+      height: 600px;
+      overflow-y: auto;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #5d7599;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4a5d7a;
+    }
+
+    .snackbar {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 5px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1000;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      margin: 0 auto;
+      background-color: #5d7599;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      font-size: 14px;
+    }
+
+    .snackbar.show {
+      visibility: visible;
+      animation: snackbarFadeIn 0.5s, snackbarFadeOut 0.5s 2.5s;
+    }
+
+    @keyframes snackbarFadeIn {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+      to {
+        bottom: 20px;
+        opacity: 1;
+      }
+    }
+
+    @keyframes snackbarFadeOut {
+      from {
+        bottom: 20px;
+        opacity: 1;
+      }
+      to {
+        bottom: 0;
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="settings-icon">⚙️</span>
+    <h1 class="title">ForgeLock</h1>
+    <button class="reset-btn">Reset</button>
+  </div>
+
+  <div class="option-row">
+    <span>Has Special Chars</span>
+    <label class="toggle-switch">
+      <input type="checkbox" id="specialChars">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="option-row">
+    <span>Password Length</span>
+    <span id="lengthValue">16</span>
+  </div>
+  <input type="range" min="8" max="32" value="16" class="length-slider" id="lengthSlider">
+
+  <div class="section-title">Text Fields</div>
+  <input type="text" class="text-field" placeholder="first word or phrase">
+  <input type="text" class="text-field" placeholder="2nd word or phrase">
+  <input type="text" class="text-field" placeholder="3th word or phrase">
+  <button class="add-button">+</button>
+
+  <div class="section-title">Date Fields</div>
+  <button class="add-button">+</button>
+
+  <div class="section-title">Number Fields</div>
+  <button class="add-button">+</button>
+
+  <button class="generate-btn">Generate Password</button>
+
+  <div id="snackbar" class="snackbar"></div>
+
+  <script src="password_generator.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html> 
