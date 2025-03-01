@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ForgeLock",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Secure password generator",
   "icons": {
     "128": "icons/128.png",

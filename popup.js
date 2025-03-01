@@ -34,7 +34,7 @@ lengthSlider.addEventListener("input", (e) => {
 resetBtn.addEventListener("click", () => {
   lengthSlider.value = 16;
   lengthValue.textContent = "16";
-  specialCharsToggle.checked = false;
+  specialCharsToggle.checked = true;
   textFields.forEach((field) => {
     field.value = "";
   });
@@ -72,12 +72,29 @@ async function copyToClipboard(text) {
 // Update the generate button click handler
 generateBtn.addEventListener("click", async () => {
   try {
-    const strings = Array.from(textFields)
+    const strings = Array.from(
+      document.querySelectorAll("#textFieldsContainer input")
+    )
       .map((field) => field.value)
       .filter((value) => value.length > 0);
 
-    const numbers = []; // Add number field handling here
-    const dates = []; // Add date field handling here
+    const numbers = Array.from(
+      document.querySelectorAll("#numberFieldsContainer input")
+    )
+      .map((field) => field.value)
+      .filter((value) => value.length > 0);
+
+    // Convert dates to UTC midnight Date objects
+    const dates = Array.from(
+      document.querySelectorAll("#dateFieldsContainer input")
+    )
+      .map((field) => {
+        const date = new Date(field.value);
+        return new Date(
+          Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+        );
+      })
+      .filter((value) => value instanceof Date && !isNaN(value));
 
     console.log("Generating password with:", {
       strings,
@@ -120,4 +137,165 @@ generateBtn.addEventListener("click", async () => {
       generateBtn.textContent = "Generate Password";
     }, 2000);
   }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Add field functionality
+  const addButtons = document.querySelectorAll(".add-button");
+
+  addButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const fieldType = this.getAttribute("data-field-type");
+      addNewField(fieldType);
+    });
+  });
+
+  function createRemoveButton() {
+    const removeButton = document.createElement("button");
+    removeButton.className = "remove-button";
+    removeButton.innerHTML = "-";
+    return removeButton;
+  }
+
+  function addNewField(fieldType) {
+    const container = document.getElementById(`${fieldType}FieldsContainer`);
+    const fieldCount = container.children.length + 1;
+
+    // Create wrapper div for field and remove button
+    const fieldContainer = document.createElement("div");
+    fieldContainer.className = "field-container";
+
+    let newField;
+    switch (fieldType) {
+      case "text":
+        newField = document.createElement("input");
+        newField.type = "text";
+        newField.className = "text-field";
+        newField.placeholder = `${fieldCount}${getOrdinalSuffix(
+          fieldCount
+        )} word or phrase`;
+        break;
+      case "date":
+        newField = document.createElement("input");
+        newField.type = "date";
+        newField.className = "text-field";
+        // Set to UTC midnight for today
+        const now = new Date();
+        const utcDate = new Date(
+          Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())
+        );
+        newField.value = utcDate.toISOString().split("T")[0];
+        newField.setAttribute("aria-label", `Date field ${fieldCount}`);
+        // Add change listener to normalize to UTC midnight
+        newField.addEventListener("change", function () {
+          const date = new Date(this.value);
+          const utc = new Date(
+            Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+          );
+          this.value = utc.toISOString().split("T")[0];
+        });
+        break;
+      case "number":
+        newField = document.createElement("input");
+        newField.type = "number";
+        newField.className = "text-field";
+        newField.placeholder = `${fieldCount}${getOrdinalSuffix(
+          fieldCount
+        )} number`;
+        break;
+    }
+
+    // Create remove button
+    const removeButton = createRemoveButton();
+    removeButton.addEventListener("click", function () {
+      fieldContainer.remove();
+      updatePlaceholders(container, fieldType);
+    });
+
+    // Add field and button to container
+    fieldContainer.appendChild(newField);
+    // Only add remove button for text fields if it's the 4th or later field
+    if (fieldType !== "text" || fieldCount > 3) {
+      fieldContainer.appendChild(removeButton);
+    }
+    container.appendChild(fieldContainer);
+  }
+
+  function getOrdinalSuffix(number) {
+    const j = number % 10;
+    const k = number % 100;
+    if (j == 1 && k != 11) {
+      return "st";
+    }
+    if (j == 2 && k != 12) {
+      return "nd";
+    }
+    if (j == 3 && k != 13) {
+      return "rd";
+    }
+    return "th";
+  }
+
+  // Update the initial fields setup
+  const containers = ["textFieldsContainer"]; // Only setup text fields initially
+  containers.forEach((containerId) => {
+    const container = document.getElementById(containerId);
+    const inputs = container.querySelectorAll("input");
+    const fieldType = containerId.replace("FieldsContainer", "");
+
+    inputs.forEach((input, index) => {
+      const fieldContainer = document.createElement("div");
+      fieldContainer.className = "field-container";
+
+      // Get the input's parent
+      const parent = input.parentNode;
+
+      // Remove the input from its current position
+      parent.removeChild(input);
+
+      // Create remove button
+      const removeButton = createRemoveButton();
+      removeButton.addEventListener("click", function () {
+        fieldContainer.remove();
+        updatePlaceholders(container, fieldType);
+      });
+
+      // Add input and button to new container
+      fieldContainer.appendChild(input);
+      // Only add remove button for text fields if it's the 4th or later field
+      if (fieldType !== "text" || index > 2) {
+        fieldContainer.appendChild(removeButton);
+      }
+      container.appendChild(fieldContainer);
+    });
+  });
+
+  // Function to update placeholders after removal
+  function updatePlaceholders(container, fieldType) {
+    if (fieldType === "text" || fieldType === "number") {
+      const inputs = container.querySelectorAll("input");
+      inputs.forEach((input, index) => {
+        const count = index + 1;
+        const suffix = getOrdinalSuffix(count);
+        if (fieldType === "text") {
+          input.placeholder = `${count}${suffix} word or phrase`;
+        } else {
+          input.placeholder = `${count}${suffix} number`;
+        }
+      });
+    }
+  }
+
+  // Settings menu functionality
+  const settingsIcon = document.querySelector(".settings-icon");
+  const settingsMenu = document.getElementById("settingsMenu");
+  const closeSettings = document.getElementById("closeSettings");
+
+  settingsIcon.addEventListener("click", () => {
+    settingsMenu.classList.add("show");
+  });
+
+  closeSettings.addEventListener("click", () => {
+    settingsMenu.classList.remove("show");
+  });
 });
