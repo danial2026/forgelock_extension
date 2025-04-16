@@ -19,7 +19,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "forgelock@danials.space",
-      "strict_min_version": "57.0"
+      "strict_min_version": "58.0"
     }
   }
 }
