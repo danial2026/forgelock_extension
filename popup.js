@@ -40,13 +40,21 @@ resetBtn.addEventListener("click", () => {
   });
 });
 
-// Add this function for clipboard operations
+// Cross-browser clipboard operations
 async function copyToClipboard(text) {
   try {
-    // Try using the Clipboard API first
-    await navigator.clipboard.writeText(text);
-    return true;
+    // Try using the Clipboard API with proper error handling for Firefox
+    if (
+      typeof navigator.clipboard !== "undefined" &&
+      navigator.clipboard.writeText
+    ) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } else {
+      throw new Error("Clipboard API not available");
+    }
   } catch (err) {
+    console.warn("Clipboard API failed, using fallback method:", err);
     try {
       // Fallback: Create temporary textarea
       const textArea = document.createElement("textarea");
@@ -59,9 +67,9 @@ async function copyToClipboard(text) {
       textArea.select();
 
       // Execute copy command
-      document.execCommand("copy");
+      const success = document.execCommand("copy");
       textArea.remove();
-      return true;
+      return success;
     } catch (err2) {
       console.error("Failed to copy text:", err2);
       return false;

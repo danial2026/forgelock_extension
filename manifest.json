@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "ForgeLock",
   "version": "0.1.0",
   "description": "Secure password generator",
@@ -8,13 +8,18 @@
     "512": "icons/512.png",
     "16": "icons/favicon.png"
   },
-  "permissions": ["clipboardWrite"],
-  "host_permissions": ["https://forgelock.danials.space/"],
-  "action": {
+  "permissions": ["clipboardWrite", "https://forgelock.danials.space/"],
+  "browser_action": {
     "default_icon": {
       "16": "icons/favicon.png",
       "128": "icons/128.png"
     },
     "default_popup": "popup.html"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "forgelock@danials.space",
+      "strict_min_version": "57.0"
+    }
   }
 }
