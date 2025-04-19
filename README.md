@@ -2,6 +2,16 @@
 
 A browser extension version of [ForgeLock](https://forgelock.danials.space) - an open-source password generator that helps you create strong, memorable, and secure passwords without cloud storage or third-party password managers.
 
+
+## Install
+
+### Chrome Version
+Available on [Chrome Web Store](https://chromewebstore.google.com/detail/forgelock/lhhheoabmdjigkddkkempmdlbpodjgoo)
+
+### Firefox Version
+Available on [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/forgelock/)
+
+
 ## Features
 
 - **Local Password Generation**: All passwords are generated locally - no data is ever sent or stored online
